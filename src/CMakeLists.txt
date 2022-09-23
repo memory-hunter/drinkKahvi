@@ -1,4 +1,4 @@
-add_executable(drinkKahvi drinkKahvi.cpp include/constants.h include/window.h constants.cpp window.cpp )
+add_executable(drinkKahvi drinkKahvi.cpp include/components.h include/constants.h include/window.h constants.cpp window.cpp )
 
 include_directories(${PROJECT_SOURCE_DIR}/src/include)
 
