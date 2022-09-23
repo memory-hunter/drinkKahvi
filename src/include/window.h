@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include "constants.h"
+#include "components.h"
 
 class window {
 private:
@@ -16,7 +17,9 @@ private:
 
     GLFWwindow *win{};
 
-    void new_frame();
+    static void new_frame();
+
+    void position_window_at_top() const;
 
     static void eprintf(int error, const char* description);
 public:
