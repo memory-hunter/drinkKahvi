@@ -3,6 +3,8 @@
 
 #include <imgui.h>
 #include <imgui_stdlib.h>
+#include <filesystem>
+#include <boost/property_tree/json_parser.hpp>
 
 struct popup_flags {
     bool about_popup = false;
@@ -31,8 +33,25 @@ namespace components {
             ImGui::Separator();
             ImGui::Text("Please enter the KahviBreak directory:");
             static std::string kahvi_dir;
+            static bool kahvi_dir_set = false;
+            boost::property_tree::ptree root;
+            if (std::filesystem::exists("config.json") && !kahvi_dir_set){
+                boost::property_tree::read_json("config.json", root);
+                kahvi_dir = root.get<std::string>("kahvi_path");
+                kahvi_dir_set = true;
+            }
             ImGui::InputText("###kahvi_dir", &kahvi_dir);
+            std::filesystem::path kahvi_path(kahvi_dir);
             if (ImGui::Button("Set", ImVec2(120, 0))) {
+                if (kahvi_dir[0] == '\"' && kahvi_dir[kahvi_dir.length() - 1] == '\"') {
+                    kahvi_dir = kahvi_dir.substr(1, kahvi_dir.length() - 2);
+                }
+                if (std::filesystem::is_directory(kahvi_path)) {
+                    ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Invalid directory");
+                }
+                root.put("kahvi_path", kahvi_dir);
+                boost::property_tree::write_json("config.json", root);
+                kahvi_dir_set = false;
                 ImGui::CloseCurrentPopup();
             }
             ImGui::EndPopup();
